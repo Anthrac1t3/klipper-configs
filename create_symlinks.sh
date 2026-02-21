@@ -3,9 +3,28 @@
 # Function to display usage information
 usage() {
     echo "Usage: $0 <source_directory>"
-    echo "Creates symbolic links for all .cfg files from source_directory to /home/${USER}/printer_data/config"
     echo ""
-    echo "Example: $0 /path/to/config/files/"
+    echo "DESCRIPTION:"
+    echo "  Creates symbolic links for all .cfg and .conf files from the specified source directory"
+    echo "  to the location /home/${USER}/printer_data/config."
+    echo ""
+    echo "  The symlink names will be identical to the original filenames."
+    echo ""
+    echo "ARGUMENTS:"
+    echo "  source_directory    Path to the directory containing .cfg and .conf files to link"
+    echo ""
+    echo "EXAMPLES:"
+    echo "  $0 /home/user/printer_configs"
+    echo "  $0 ./config_files"
+    echo "  $0 /path/to/my/configs"
+    echo ""
+    echo "OUTPUT:"
+    echo "  Creates symlinks in /home/${USER}/printer_data/config/ with the same names"
+    echo "  as the original .cfg and .conf files, pointing to their respective source locations."
+    echo ""
+    echo "NOTES:"
+    echo "  - Existing symlinks will be skipped with a warning"
+    echo "  - Regular files with the same name will cause warnings and be skipped"
     exit 1
 }
 
@@ -15,6 +34,7 @@ if [ $# -ne 1 ]; then
     usage
 fi
 
+# Set the target directory
 TARGET_DIR="/home/${USER}/printer_data/config"
 
 # Get the source directory from command line argument
@@ -36,10 +56,10 @@ fi
 SUCCESS_COUNT=0
 ERROR_COUNT=0
 
-# Find all .cfg files in source directory and create symlinks
-find "$SOURCE_DIR" -name "*.cfg" -type f | while read -r cfg_file; do
+# Find all the conf files in the source directory and iterate over them
+find "$SOURCE_DIR" \( -name "*.cfg" -o -name "*.conf" \) -type f | while read -r config_file; do
     # Get just the filename (basename)
-    filename=$(basename "$cfg_file")
+    filename=$(basename "$config_file")
     
     # Create the symlink
     symlink_path="$TARGET_DIR/$filename"
@@ -55,8 +75,9 @@ find "$SOURCE_DIR" -name "*.cfg" -type f | while read -r cfg_file; do
     fi
     
     # Create the symlink
-    if ln -s "$cfg_file" "$symlink_path"; then
-        echo "Created symlink: $filename -> $cfg_file"
+    ln -s "$config_file" "$symlink_path"
+    if [ $? -e 0 ]; then
+        echo "Created symlink: $symlink_path -> $config_file"
         SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
     else
         echo "Error: Failed to create symlink for $filename"
