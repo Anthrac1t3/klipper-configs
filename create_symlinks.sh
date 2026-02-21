@@ -5,7 +5,7 @@ usage() {
     echo "Usage: $0 <source_directory>"
     echo "Creates symbolic links for all .cfg files from source_directory to /home/${USER}/printer_data/config"
     echo ""
-    echo "Example: $0 /path/to/config/files"
+    echo "Example: $0 /path/to/config/files/"
     exit 1
 }
 
@@ -14,6 +14,8 @@ if [ $# -ne 1 ]; then
     echo "Error: Please provide exactly one argument (source directory)"
     usage
 fi
+
+TARGET_DIR="/home/${USER}/printer_data/config"
 
 # Get the source directory from command line argument
 SOURCE_DIR="$1"
