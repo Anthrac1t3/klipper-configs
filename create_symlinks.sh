@@ -76,7 +76,7 @@ find "$SOURCE_DIR" \( -name "*.cfg" -o -name "*.conf" \) -type f | while read -r
     
     # Create the symlink
     ln -s "$config_file" "$symlink_path"
-    if [ $? -e 0 ]; then
+    if [[ $? -e 0 ]]; then
         echo "Created symlink: $symlink_path -> $config_file"
         SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
     else
